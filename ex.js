@@ -35,14 +35,31 @@ app.get('/api/courses/:id', (req,res)=>
 //http Post Request
 app.post('/api/courses', (req, res)=>{
 
-    if (!req.body.name.min(3))
+    if (req.body.name.length < 4)
     {
-        res.send('The name needs to be a minimum of 3 characters');
+        res.status(400).send("Error: Course name must be at least 3 characters long.");
     }
-    const course = {id: courses.length + 1, name: req.body.name}
-    courses.push(course);
+    else
+    {
+        const course = {id: courses.length + 1, name: req.body.name}
+        courses.push(course);
+        res.send(course);
+    }
     
-})
+});
+
+//http delete request
+app.delete('/api/courses/:id', (req,res)=>{
+    const course = course.find(c => c.id === parseInt(req.params.id));
+    if (!course)
+    {
+        return res.status(404).send("Error: Course not found.");
+    }
+    const index = courses.indexOf(course);
+    courses.splice(index, 1);
+    res.send(course);
+});
+
 
 app.listen(3000, () => {
     console.log('Listening on port 3000 ....');
